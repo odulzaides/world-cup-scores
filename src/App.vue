@@ -1,29 +1,71 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <header>
+      <span>World Cup Scores</span>
+    </header>
+    <main>
+      <h2>Click button to get scores</h2>
+      <button v-on:click="getScores">Get Scores</button>
+      <div  v-if="loading">
+          <img src="./assets/logo.png" alt="Vue logo">
+          Loading
+      </div>
+      <div v-for="matchday of scores" class="matchday-div">
+        <div class="matchday">
+          <div class="matchday-title">
+            <h4>{{matchday.name}}</h4>
+          </div>
+          <div v-for="match of matchday.matches" class="matchday-body">
+            <ul>
+              <li>{{match.city}}</li>
+            </ul>
+          </div>
+
+
+        </div>
+       
+      </div>
+    </main>
+
   </div>
 </template>
+<script>
+import axios from "axios";
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+export default {
+  name: "app",
+  data() {
+    return {
+      scores: [],
+      loading: false
+    };
+  },
+  methods: {
+    getScores: function() {
+      this.loading = true;
+      axios
+        .get(
+          "https://raw.githubusercontent.com/openfootball/world-cup.json/master/2018/worldcup.json"
+        )
+        .then(
+          response => {
+            this.loading = false;
+            this.scores = response.data.rounds;
+            console.log(response + " ROUNDS -> " + this.scores[0]);
+          },
+          error => {
+            this.loading = false;
+          }
+        );
     }
+  }
+};
+</script>
+<style lang="scss">
+.matchday {
+  display: flex;
+  & > ul {
+    list-style: none;
   }
 }
 </style>
