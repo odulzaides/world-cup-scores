@@ -13,11 +13,17 @@
                     :value="matchday.name">{{matchday.name}}</option>
         </select>
         <div class="row">
-          <div v-for="match of matches" class="col-md-4 match">
+          <div v-if="match.score1 >= 0"
+          v-for="match of matches"
+               class="col-md-4 match">  
             <div>
               <div class="title-div">
-                <h4>{{match.group}}</h4>
-                <h5>{{match.city}}</h5>
+                <h3>{{match.group}}</h3>
+                <h5 v-if="match.group">{{match.city}}</h5>
+                <h3 v-if="match.num <57"  >Round of 16</h3>
+                <h3 v-if="match.num <57"  >Quarter Finals</h3>
+
+                <h5>{{match.date}}</h5>
               </div>
               <div class="team-div">
                 <p>{{match.team1.name}}</p>
@@ -69,16 +75,18 @@ export default {
       for (var i = 0; i < this.rounds.length; i++) {
         if (this.rounds[i].name == this.matchday) {
           this.matches = this.rounds[i].matches;
-          // localStorage.matches = this.rounds[i];
+          localStorage.matches = this.rounds[i];
+          console.log(this.matches);
         }
       }
     }
   },
   beforeMount() {
     this.getScores();
+    // this.getMatchdayMatches();
     if (localStorage.matchday) {
       this.matchday = localStorage.matchday;
-      // this.matches = localStorage.matches;
+      // this.matches = JSON.plocalStorage.matches;
     }
   }
 };
@@ -103,14 +111,20 @@ export default {
 }
 .row {
   display: flex;
+  flex-wrap: wrap;
+}
+.col-md-4 {
+  width: 25%;
 }
 .match {
-  background: rgba(26.7%, 83.9%, 17.3%, 1);
-  color: white;
+  background: transparent;
+  color: black;
+  flex-grow: 1;
   padding: 1em;
-  margin: 1em;
+  margin: 10px 0 0 2%;
   border-radius: 10px;
-  width: 25%;
+  border: 1px lightgrey solid;
+  flex: 1 0 25%;
 }
 .title-div {
   margin: 0 auto;
